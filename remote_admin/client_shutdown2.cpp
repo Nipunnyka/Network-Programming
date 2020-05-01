@@ -1,90 +1,112 @@
-#include<iostream>
-#include<fstream>
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <netdb.h>
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <stdio.h>
-#include <string.h>
-#include <stdio.h> 
-#include <sys/socket.h> 
-#include <stdlib.h> 
-#include <netinet/in.h> 
-#include <string.h> 
-#include <unistd.h>
-using namespace std;
-#define PORT "3000"
+#include<graphics.h>
+#include<stdio.h>
+#include<bits/stdc++.h>
+//#include<conio.h>
+//#include<iostream.h>
+#include<math.h>
+#define M 4
 
+void mm(float a[M][M],float b[M])
+{float c[M]={0,0,0,0};
 
-int main(){
-	struct addrinfo hints;
-	struct addrinfo* servinfo,*p;
-	int sockfd;
+ for(int i=0;i<M;i++)
+  {for(int j=0;j<M;j++)
+   {c[i]=c[i]+a[i][j]*b[j];
+    }
+  }
+ for(int k=0;k<M;k++)
+ {b[k]=c[k];}
+}
 
-	memset(&hints,0,sizeof(hints));
-	hints.ai_family = AF_INET;
-	hints.ai_socktype = SOCK_STREAM;
-	// hints.ai_flags = AI_PASSIVE; 
-	//hints.ai_protocol = 0; //find number for IPV4
-	
-	int status = getaddrinfo("192.168.2.100-250",PORT, &hints, &servinfo);
-	if(status != 0){
-		std::cout<<"Couldn't load the server\n";
-		exit(1);
-	}
-	
-	for(p = servinfo; p != NULL; p = p->ai_next) {
-	    if ((sockfd = socket(p->ai_family, p->ai_socktype,
-	            p->ai_protocol)) == -1) {
-	        perror("socket");
-	        continue;
-	    }
+void display(float m[M],float p1[M],float p2[M])
+{int y=getmaxy();
+line(m[0]+100,y-m[1]-100,p1[0]+100,y-p1[1]-100);
+line(m[0]+100,y-m[1]-100,p2[0]+100,y-p2[1]-100);
 
-	    if (connect(sockfd, p->ai_addr, p->ai_addrlen) == -1) {
-	        perror("connect");
-	        close(sockfd);
-	        continue;
-	    }
+}
 
-	    break; // if we get here, we must have connected successfully
-	}
+void copy(float a[],float b[])
+{
+for(int i=0;i<M;i++)
+   a[i]=b[i];
+}
+int main()
+{//clrscr();
+int gd=DETECT,gm;
+initgraph(&gd,&gm,NULL);
 
-	if (p == NULL) {
-		fprintf(stderr, "client: failed to connect\n");
-		return 2;
-	}
-	
-	cout <<"Connected to server\n";
-	freeaddrinfo(servinfo);
+float a[M][M]={{1,0,0,-5},{0,1,0,-8},{0,0,1,-9},{0,0,0,1}};
+float m[M]={5,8,9,1};
+float p1[M]={14,13,17};
+float p2[M]={-3,17,4};
 
-	char message[1024];
-	while(1){
-	   bzero(message,1024);
-	   read(sockfd, message, sizeof(message));
-	   string str(message);
-	   str += " >temp.txt";
-	   system(str.c_str());
+display(m,p1,p2);
 
-	   ifstream myfile("temp.txt");
-	   string to_send;
-		  string line;
-		  if (myfile.is_open())
-		  {
-		    while ( getline (myfile,line) )
-		    {
-		      to_send += line;
-		      cout << line << endl;
-		    }
-		    myfile.close();
-		  }
-		  
-		cout << to_send << endl;  
-		int bytes_sent = send(sockfd ,(void *)to_send.c_str(), 1024,0);
-		if (bytes_sent <= 0){
-			cout<<"Error in sending data";
-		}
-	}
-		
-	freeaddrinfo(servinfo);
+mm(a,m);
+mm(a,p1);
+mm(a,p2);
+
+float n[M],q1[M],q2[M];
+copy(n,m);
+copy(q1,p1);
+copy(q2,p2);
+
+// to fig2
+a[0][0]=.723;a[0][1]=-.365;a[0][2]=-.585;a[0][3]=0;
+a[1][1]=.847;a[1][2]=-.52;a[1][3]=0;
+a[2][0]=.69;a[2][1]=.38;a[2][2]=.61;a[2][3]=0;
+mm(a,n);
+mm(a,q1);
+mm(a,q2);
+a[0][0]=1;a[0][1]=0;a[0][2]=0;
+a[1][1]=1;a[1][2]=0;a[1][3]=0;
+a[2][0]=0;a[2][1]=0;a[2][2]=1;
+n[0]+=200;q1[0]+=200;q2[0]+=200;
+display(n,q1,q2);
+
+copy(n,m);
+copy(q1,p1);
+copy(q2,p2);
+
+//to fig3
+a[0][0]=.72;a[0][1]=-.365;a[0][2]=-.585;
+a[1][0]=.69;a[1][1]=.38;a[1][2]=.61;
+a[2][1]=-.89;a[2][2]=.52;
+mm(a,n);
+mm(a,q1);
+mm(a,q2);
+
+a[0][0]=1;a[0][1]=0;a[0][2]=0;
+a[1][0]=0;a[1][1]=1;a[1][2]=0;
+a[2][1]=0;a[2][2]=1;
+n[1]+=200;q1[1]+=200;q2[1]+=200;
+
+display(n,q1,q2);
+
+copy(n,m);
+copy(q1,p1);
+copy(q2,p2);
+
+//to fig4 
+a[0][0]=.69;a[0][1]=.38;a[0][2]=.61;
+a[1][0]=-.485;a[1][1]=.87;
+a[2][0]=-.536;a[2][1]=-.297;a[2][2]=.789;
+
+mm(a,n);
+mm(a,q1);
+mm(a,q2);
+
+n[0]+=200;q1[0]+=200;q2[0]+=200;
+n[1]+=200;q1[1]+=200;q2[1]+=200;
+
+display(n,q1,q2);
+
+copy(n,m);
+copy(q1,p1);
+copy(q2,p2);
+
+getch();
+closegraph();
+restorecrtmode();
+return 0;
 }
